@@ -1,0 +1,245 @@
+<div class="title_row first">
+    <h3>Log Details - #<?php echo $this->Html->safe($log->id); ?></h3>
+</div>
+
+<div class="pad">
+    <div class="row">
+        <div class="col-md-12">
+            <a href="<?php echo $this->Html->safe($this->base_uri . 'plugin/virtfusion_push/admin_logs/index/' . $plugin_id . '/'); ?>"
+               class="btn btn-default" style="margin-bottom: 15px;">
+                <i class="fa fa-arrow-left"></i> Back to Logs
+            </a>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">Log Information</h4>
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th style="width: 200px;">Log ID</th>
+                        <td><?php echo $this->Html->safe($log->id); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Date/Time</th>
+                        <td><?php echo $this->Html->safe($log->created_at); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Action</th>
+                        <td>
+                            <span class="label label-<?php
+                                if (strpos($log->action, 'transfer') !== false) {
+                                    echo 'primary';
+                                } elseif (strpos($log->action, 'push') !== false) {
+                                    echo 'success';
+                                } elseif (strpos($log->action, 'fail') !== false) {
+                                    echo 'danger';
+                                } else {
+                                    echo 'default';
+                                }
+                            ?>">
+                                <?php echo $this->Html->safe($log->action); ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Message</th>
+                        <td><?php echo $this->Html->safe($log->message); ?></td>
+                    </tr>
+                    <tr>
+                        <th>IP Address</th>
+                        <td><?php echo $this->Html->safe($log->ip_address ?? 'N/A'); ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">Client Information</h4>
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th style="width: 200px;">Client ID</th>
+                        <td>
+                            <?php echo $this->Html->safe($log->client_id); ?>
+                            (Display ID: <?php echo $this->Html->safe($log->client_id_value); ?>)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Client Name</th>
+                        <td><?php echo $this->Html->safe($log->client_name); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Client Email</th>
+                        <td><?php echo $this->Html->safe($log->client_email); ?></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">Service Information</h4>
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th style="width: 200px;">Service ID</th>
+                        <td><?php echo $this->Html->safe($log->service_id); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Package Name</th>
+                        <td><?php echo $this->Html->safe($log->service_package); ?></td>
+                    </tr>
+                    <tr>
+                        <th>Service Status</th>
+                        <td>
+                            <span class="label label-<?php
+                                switch ($log->service_status) {
+                                    case 'active':
+                                        echo 'success';
+                                        break;
+                                    case 'suspended':
+                                        echo 'warning';
+                                        break;
+                                    case 'canceled':
+                                    case 'cancelled':
+                                        echo 'danger';
+                                        break;
+                                    default:
+                                        echo 'default';
+                                }
+                            ?>">
+                                <?php echo $this->Html->safe($log->service_status); ?>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <?php if ($log->transfer_id && $transfer): ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">Transfer Information</h4>
+            </div>
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th style="width: 200px;">Transfer ID</th>
+                            <td><?php echo $this->Html->safe($transfer->id); ?></td>
+                        </tr>
+                        <tr>
+                            <th>From Client ID</th>
+                            <td><?php echo $this->Html->safe($transfer->from_client_id); ?> (<?php echo $this->Html->safe($transfer->from_email); ?>)</td>
+                        </tr>
+                        <tr>
+                            <th>To Client ID</th>
+                            <td><?php echo $this->Html->safe($transfer->to_client_id); ?> (<?php echo $this->Html->safe($transfer->to_email); ?>)</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td>
+                                <span class="label label-<?php
+                                    switch ($transfer->status) {
+                                        case 'completed':
+                                            echo 'success';
+                                            break;
+                                        case 'pending':
+                                        case 'awaiting_payment':
+                                            echo 'warning';
+                                            break;
+                                        case 'failed':
+                                        case 'cancelled':
+                                            echo 'danger';
+                                            break;
+                                        default:
+                                            echo 'default';
+                                    }
+                                ?>">
+                                    <?php echo $this->Html->safe($transfer->status); ?>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>VirtFusion Server ID</th>
+                            <td><?php echo $this->Html->safe($transfer->virtfusion_server_id ?? 'N/A'); ?></td>
+                        </tr>
+                        <?php if (!empty($transfer->invoice_id)): ?>
+                            <tr>
+                                <th>Invoice ID</th>
+                                <td><?php echo $this->Html->safe($transfer->invoice_id); ?></td>
+                            </tr>
+                            <tr>
+                                <th>Push Price</th>
+                                <td><?php echo $this->Html->safe(number_format($transfer->push_price, 2)); ?></td>
+                            </tr>
+                        <?php endif; ?>
+                        <tr>
+                            <th>Created At</th>
+                            <td><?php echo $this->Html->safe($transfer->created_at); ?></td>
+                        </tr>
+                        <tr>
+                            <th>Transferred At</th>
+                            <td><?php echo $this->Html->safe($transfer->transferred_at ?? 'N/A'); ?></td>
+                        </tr>
+                        <?php if (!empty($transfer->error_message)): ?>
+                            <tr>
+                                <th>Error Message</th>
+                                <td class="text-danger"><?php echo $this->Html->safe($transfer->error_message); ?></td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($log->details_decoded)): ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">Additional Details</h4>
+            </div>
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <?php foreach ($log->details_decoded as $key => $value): ?>
+                            <tr>
+                                <th style="width: 200px;"><?php echo $this->Html->safe(ucfirst(str_replace('_', ' ', $key))); ?></th>
+                                <td>
+                                    <?php
+                                    if (is_array($value) || is_object($value)) {
+                                        echo '<pre>' . $this->Html->safe(json_encode($value, JSON_PRETTY_PRINT)) . '</pre>';
+                                    } else {
+                                        echo $this->Html->safe($value);
+                                    }
+                                    ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <div class="row">
+        <div class="col-md-12">
+            <a href="<?php echo $this->Html->safe($this->base_uri . 'plugin/virtfusion_push/admin_logs/index/' . $plugin_id . '/'); ?>"
+               class="btn btn-default">
+                <i class="fa fa-arrow-left"></i> Back to Logs
+            </a>
+        </div>
+    </div>
+</div>

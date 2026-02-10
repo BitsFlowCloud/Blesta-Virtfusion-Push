@@ -1,0 +1,305 @@
+<div class="title_row first clearfix">
+    <h3 class="pull-left"><?php $this->_('VirtfusionPush.admin.heading');?></h3>
+    
+    <div class="pull-right">
+        <a href="<?php echo $this->Html->safe($this->base_uri . 'plugin/virtfusion_push/admin_logs/index/' . $plugin_id . '/'); ?>"
+           class="btn btn-info btn-sm" 
+           id="btn-view-logs">
+            <i class="fa fa-list"></i> View Activity Logs
+        </a>
+    </div>
+</div>
+
+<div class="pad">
+    <?php if (!empty($success_message)): ?>
+        <div class="alert alert-success">
+            <i class="fa fa-check-circle"></i>
+            <?php echo $this->Html->safe($success_message); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (empty($module_rows)): ?>
+        <div class="alert alert-warning">
+            <i class="fa fa-exclamation-triangle"></i>
+            <?php $this->_('VirtfusionPush.admin.no_servers_configured');?>
+        </div>
+    <?php else: ?>
+        <h4><?php $this->_('VirtfusionPush.admin.configured_servers');?></h4>
+
+        <?php foreach ($module_rows as $row): ?>
+            <?php
+            // Find existing settings for this module row
+            $current_settings = null;
+            foreach ($all_settings as $setting) {
+                if ($setting->module_row_id == $row->id) {
+                    $current_settings = $setting;
+                    break;
+                }
+            }
+
+            $server_name = $row->meta->name ?? "VirtFusion Server #{$row->id}";
+            ?>
+
+            <div class="panel panel-default" style="margin-bottom: 20px;">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <?php echo $this->Html->safe($server_name); ?>
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <?php
+                    $this->Form->create(null, ['class' => 'disable-on-submit']);
+                    $this->Form->fieldHidden('module_row_id', $row->id);
+                    ?>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <?php $checkbox_id = 'enable_all_' . $row->id; ?>
+                        <label for="<?php echo $checkbox_id; ?>" style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 8px;">
+                            <?php $this->Form->fieldCheckbox('enable_all', '1', $current_settings->enable_all ?? false, ['id' => $checkbox_id, 'class' => 'form-check-input enable-all-checkbox', 'style' => 'margin-right: 8px; vertical-align: middle;']); ?>
+                            <span style="vertical-align: middle;">Enable for All Users</span>
+                        </label>
+                        <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">If checked, all clients can use the Push feature for this server.</small>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <?php $cooldown_id = 'push_cooldown_days_' . $row->id; ?>
+                        <label for="<?php echo $cooldown_id; ?>" style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 8px;">Push Cooldown (Days)</label>
+                        <?php $this->Form->fieldText('push_cooldown_days', $current_settings->push_cooldown_days ?? 0, ['id' => $cooldown_id, 'class' => 'form-control', 'type' => 'number', 'min' => '0', 'placeholder' => '0']); ?>
+                        <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Number of days a service must wait before it can be pushed again. Set to 0 to disable cooldown.</small>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <?php $price_id = 'push_price_' . $row->id; ?>
+                        <label for="<?php echo $price_id; ?>" style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 8px;">Push Price</label>
+                        <?php $this->Form->fieldText('push_price', $current_settings->push_price ?? '0.00', ['id' => $price_id, 'class' => 'form-control', 'type' => 'number', 'min' => '0', 'step' => '0.01', 'placeholder' => '0.00']); ?>
+                        <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Price to charge for each push operation. Set to 0 for free pushes. An invoice will be created if price > 0.</small>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <?php $currency_id = 'push_price_currency_' . $row->id; ?>
+                        <label for="<?php echo $currency_id; ?>" style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 8px;">Push Price Currency</label>
+                        <select name="push_price_currency" id="<?php echo $currency_id; ?>" class="form-control" style="width: 120px;">
+                            <?php
+                            $current_currency = $current_settings->push_price_currency ?? 'USD';
+                            foreach ($currencies as $currency):
+                            ?>
+                                <option value="<?php echo $this->Html->safe($currency->code); ?>"
+                                        <?php echo ($currency->code == $current_currency) ? 'selected' : ''; ?>>
+                                    <?php echo $this->Html->safe($currency->code); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Auto-converted to client's currency.</small>
+                    </div>
+
+                    <div class="form-group allowed-clients-group" data-server="<?php echo $row->id; ?>" style="margin-bottom: 25px;">
+                        <?php $field_id = 'allowed_client_ids_' . $row->id; ?>
+                        <label for="<?php echo $field_id; ?>" style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 8px;">Allowed Client IDs (comma-separated)</label>
+                        <?php $this->Form->fieldText('allowed_client_ids', $current_settings->allowed_client_ids ?? '', ['id' => $field_id, 'class' => 'form-control', 'placeholder' => 'e.g., 1,5,10']); ?>
+                        <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Specify client IDs separated by commas.</small>
+                    </div>
+
+                    <div class="form-group allowed-packages-group" data-server="<?php echo $row->id; ?>" style="margin-bottom: 25px;">
+                        <label style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 10px;">Allowed Packages</label>
+                        <?php
+                        $current_package_ids = [];
+                        if (!empty($current_settings->allowed_package_ids)) {
+                            $current_package_ids = array_map('trim', explode(',', $current_settings->allowed_package_ids));
+                        }
+                        $row_packages = array_filter($packages, function($pkg) use ($row) {
+                            return $pkg->module_row == $row->id;
+                        });
+                        ?>
+                        <?php if (empty($row_packages)): ?>
+                            <p style="color: #999; font-size: 13px;">No packages configured for this server.</p>
+                        <?php else: ?>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: inline-block; cursor: pointer; font-weight: normal; font-size: 13px;">
+                                    <?php $this->Form->fieldCheckbox('allow_all_packages', '1', $current_settings->allow_all_packages ?? true, ['class' => 'allow-all-packages-checkbox', 'data-server' => $row->id, 'style' => 'margin-right: 8px; vertical-align: middle;']); ?>
+                                    <span style="vertical-align: middle;">Allow All Packages (Clear all selections below)</span>
+                                </label>
+                            </div>
+                            <?php
+                            $packages_array = array_values($row_packages);
+                            $total = count($packages_array);
+                            $items_per_column = 10;
+                            $num_columns = ceil($total / $items_per_column);
+                            ?>
+                            <div style="border: 1px solid #ddd; padding: 10px; border-radius: 4px; display: inline-block; margin-bottom: 8px;">
+                                <div style="display: flex; gap: 30px;">
+                                    <?php for ($col = 0; $col < $num_columns; $col++): ?>
+                                        <div style="min-width: 200px;">
+                                            <?php
+                                            $start = $col * $items_per_column;
+                                            $end = min($start + $items_per_column, $total);
+                                            for ($i = $start; $i < $end; $i++):
+                                                $pkg = $packages_array[$i];
+                                                $checked = in_array((string)$pkg->id, $current_package_ids);
+                                            ?>
+                                                <div style="margin-bottom: 5px;">
+                                                    <label style="display: inline-block; cursor: pointer; margin: 0; white-space: nowrap; font-weight: normal; font-size: 13px;">
+                                                        <?php $this->Form->fieldCheckbox('allowed_package_ids[]', $pkg->id, $checked, ['id' => 'pkg_' . $pkg->id . '_' . $row->id, 'class' => 'package-checkbox', 'style' => 'margin-right: 6px; vertical-align: middle;']); ?>
+                                                        <span style="vertical-align: middle;"><?php echo $this->Html->safe($pkg->name ?? "Package #{$pkg->id}"); ?></span>
+                                                    </label>
+                                                </div>
+                                            <?php endfor; ?>
+                                        </div>
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="button_row">
+                        <?php $this->Form->fieldSubmit('save', 'Save Settings', ['class' => 'btn btn-primary pull-right']); ?>
+                    </div>
+                    <?php $this->Form->end(); ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</div>
+
+<!-- Modal 结构 - 不再使用 Iframe -->
+<div id="logs-modal" class="modal fade" tabindex="-1" role="dialog" style="display: none; position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 9999; overflow: hidden; -webkit-overflow-scrolling: touch; outline: 0;">
+    <div class="modal-dialog" role="document" style="width: 90%; max-width: 1400px; margin: 30px auto;">
+        <div class="modal-content" style="box-shadow: 0 5px 15px rgba(0,0,0,.5); background-color: #fff; border-radius: 6px;">
+            
+            <div class="modal-header" style="background-color: #fff; border-bottom: 1px solid #e5e5e5; border-radius: 6px 6px 0 0; padding: 15px;">
+                <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close" style="margin-top: -2px; font-size: 24px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" style="margin: 0; color: #333; font-weight: 500;"><i class="fa fa-list"></i> Activity Logs</h4>
+            </div>
+            
+            <!-- 这里使用 DIV 代替 Iframe -->
+            <div class="modal-body" style="padding: 0; height: 80vh; background-color: #fff; position: relative; overflow-y: auto;">
+                <!-- 加载动画 -->
+                <div id="modal-loader" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; justify-content: center; align-items: center; background: rgba(255,255,255,0.9); z-index: 10;">
+                    <i class="fa fa-spinner fa-spin fa-3x fa-fw text-muted"></i>
+                </div>
+                <!-- 内容容器 -->
+                <div id="logs-content-container" style="padding: 15px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade in" style="height: 100%; width: 100%; position: fixed; top:0; left:0; z-index: -1;"></div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+        // 定义加载日志的核心函数 (AJAX)
+        function loadLogs(url) {
+            var loader = $('#modal-loader');
+            var container = $('#logs-content-container');
+            
+            // 显示加载动画
+            loader.css('display', 'flex');
+            
+            // 使用 AJAX 获取页面内容
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    // 将返回的 HTML 字符串转换为 jQuery 对象
+                    var $response = $(response);
+                    
+                    // 提取核心内容
+                    // Blesta 后台通常内容在 #right_container 或 .common_box_content 中
+                    // 我们尝试查找 .title_row 的父级元素，或者直接提取 #right_container 的内容
+                    var content = $response.find('#right_container').html();
+                    
+                    // 如果找不到 #right_container，尝试找 .pad 的父级
+                    if (!content) {
+                        content = $response.find('.pad').parent().html();
+                    }
+                    
+                    // 如果还是找不到，就直接搜索 title_row
+                    if (!content && $response.find('.title_row').length > 0) {
+                         // 这是一个降级方案，可能丢失部分外层样式，但能显示内容
+                         // 创建一个临时 div 存放找到的元素
+                         var $temp = $('<div>');
+                         $temp.append($response.find('.title_row').first());
+                         $temp.append($response.find('.pad').first());
+                         content = $temp.html();
+                    }
+
+                    // 将提取的内容注入到模态框
+                    container.html(content);
+                    
+                    // 隐藏不需要的元素 (双重保险)
+                    container.find('header, nav, footer').remove();
+                    
+                    // *** 关键：修复分页链接 ***
+                    // 找到所有分页链接，阻止默认跳转，改为触发 loadLogs
+                    container.find('.pagination a').on('click', function(e) {
+                        e.preventDefault();
+                        var nextUrl = $(this).attr('href');
+                        if (nextUrl && nextUrl !== '#') {
+                            loadLogs(nextUrl);
+                        }
+                    });
+                    
+                    // *** 关键：修复分页样式 (强制内联) ***
+                    container.find('.pagination li').css({
+                        'display': 'inline-block',
+                        'float': 'none',
+                        'margin': '0 2px'
+                    });
+                     container.find('.pagination').css({
+                        'display': 'inline-block'
+                    });
+                    
+                    // 隐藏加载动画
+                    loader.fadeOut(200);
+                },
+                error: function() {
+                    container.html('<div class="alert alert-danger">Failed to load logs. Please try again.</div>');
+                    loader.fadeOut(200);
+                }
+            });
+        }
+
+        // 按钮点击事件
+        $('#btn-view-logs').on('click', function(e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            
+            // 显示模态框
+            $('#logs-modal').fadeIn(200).addClass('in');
+            $('body').addClass('modal-open');
+            
+            // 如果容器为空，或者 URL 改变了（这里简化为每次打开都刷新，保证数据最新）
+            loadLogs(url);
+        });
+
+        // 关闭模态框
+        $('#logs-modal .close, #logs-modal .modal-backdrop').on('click', function() {
+            $('#logs-modal').fadeOut(200).removeClass('in');
+            $('body').removeClass('modal-open');
+        });
+
+        // 这里的复选框逻辑保持不变
+        $('.enable-all-checkbox').each(function() {
+            var checkbox = $(this);
+            var serverId = checkbox.attr('id').replace('enable_all_', '');
+            var allowedClientsGroup = $('.allowed-clients-group[data-server="' + serverId + '"]');
+            checkbox.on('change', function() {
+                if ($(this).is(':checked')) {
+                    allowedClientsGroup.hide();
+                } else {
+                    allowedClientsGroup.show();
+                }
+            }).trigger('change');
+        });
+
+        $('.allow-all-packages-checkbox').on('change', function() {
+            var $checkbox = $(this);
+            var checkboxes = $checkbox.closest('.allowed-packages-group').find('.package-checkbox');
+            if ($checkbox.is(':checked')) {
+                checkboxes.prop('checked', false);
+            }
+        });
+    });
+</script>

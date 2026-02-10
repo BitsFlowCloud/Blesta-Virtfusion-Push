@@ -1,0 +1,82 @@
+<?php
+$this->Widget->clear();
+$this->Widget->create($this->_('VirtfusionPush.client.index.heading', true), ['id' => 'virtfusion_push_client']);
+?>
+
+<style>
+#virtfusion_push_client .table-vps {
+    width: 100% !important;
+    table-layout: fixed !important;
+}
+#virtfusion_push_client .table-vps th,
+#virtfusion_push_client .table-vps td {
+    padding: 12px 8px !important;
+    vertical-align: middle !important;
+}
+#virtfusion_push_client .table-vps .col-id { width: 6% !important; }
+#virtfusion_push_client .table-vps .col-package { width: 18% !important; }
+#virtfusion_push_client .table-vps .col-cpu { width: 8% !important; }
+#virtfusion_push_client .table-vps .col-memory { width: 9% !important; }
+#virtfusion_push_client .table-vps .col-disk { width: 8% !important; }
+#virtfusion_push_client .table-vps .col-bandwidth { width: 10% !important; }
+#virtfusion_push_client .table-vps .col-traffic { width: 10% !important; }
+#virtfusion_push_client .table-vps .col-expiration { width: 14% !important; }
+#virtfusion_push_client .table-vps .col-actions { width: 17% !important; }
+#virtfusion_push_client .table-vps td {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+#virtfusion_push_client .table-vps .col-package {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+}
+</style>
+
+<div class="inner">
+    <?php if (empty($services)) { ?>
+        <div class="alert alert-info">
+            <p><?php $this->_('VirtfusionPush.client.index.no_services');?></p>
+        </div>
+    <?php } else { ?>
+        <table class="table table-striped table-vps">
+            <thead>
+                <tr>
+                    <th class="col-id">VPS ID</th>
+                    <th class="col-package">Package Name</th>
+                    <th class="col-cpu">CPU</th>
+                    <th class="col-memory">Memory</th>
+                    <th class="col-disk">Disk</th>
+                    <th class="col-bandwidth">Bandwidth</th>
+                    <th class="col-traffic">Monthly Traffic</th>
+                    <th class="col-expiration">Expiration Date</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($services as $service) { ?>
+                <tr>
+                    <td class="col-id"><strong>#<?php echo $this->Html->safe($service->id);?></strong></td>
+                    <td class="col-package"><?php echo $this->Html->safe($service->package_name);?></td>
+                    <td class="col-cpu"><?php echo $this->Html->safe($service->fields['virtfusion_cpu'] ?? 'N/A');?> Core(s)</td>
+                    <td class="col-memory"><?php echo $this->Html->safe($service->fields['virtfusion_memory'] ?? 'N/A');?> MB</td>
+                    <td class="col-disk"><?php echo $this->Html->safe($service->fields['virtfusion_disk'] ?? 'N/A');?> GB</td>
+                    <td class="col-bandwidth"><?php echo $this->Html->safe($service->fields['virtfusion_bandwidth'] ?? 'N/A');?></td>
+                    <td class="col-traffic"><?php echo $this->Html->safe($service->fields['virtfusion_traffic'] ?? 'N/A');?> GB</td>
+                    <td class="col-expiration"><?php echo $this->Html->safe($service->date_renews_formatted);?></td>
+                    <td class="col-actions">
+                        <a href="<?php echo $this->Html->safe($this->base_uri . 'plugin/virtfusion_push/client_main/push/' . $service->id);?>"
+                           class="btn btn-primary btn-sm">
+                            Transfer VPS
+                        </a>
+                    </td>
+                </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    <?php } ?>
+</div>
+
+<?php
+$this->Widget->end();
+?>

@@ -1,0 +1,572 @@
+<?php
+$this->Widget->clear();
+$this->Widget->create($this->_('VirtfusionPush.client.push.heading', true), ['id' => 'virtfusion_push_transfer']);
+?>
+
+<style>
+/*
+   ================================================================
+   Wide Layout (850px) + Bilingual Payment Guide
+   ================================================================
+*/
+
+/* 1. 基础容器重置 */
+#virtfusion_push_transfer {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+
+/* 2. 原生标题栏 */
+#virtfusion_push_transfer .panel-heading {
+    display: block !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 0 20px 0 !important;
+    text-align: left !important;
+    margin-bottom: 0 !important;
+}
+
+#virtfusion_push_transfer .panel-title {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    text-align: left !important;
+    display: block !important;
+}
+
+/* 3. 透明化原生 Panel Body */
+#virtfusion_push_transfer .panel-body {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+/* 4. 内部卡片容器 (850px) */
+.vf-narrow-box {
+    background: #ffffff;
+    max-width: 850px !important;
+    width: 100% !important;
+    margin: 0 auto 80px auto !important;
+    padding: 60px 50px;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f1f5f9;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* 5. 顶部说明文字 */
+.vf-card-subtitle {
+    text-align: center;
+    color: #1e293b;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+/* 警告特效文字 */
+.vf-warning-text {
+    display: block;
+    margin-top: 15px;
+    font-size: 28px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #ff0000 0%, #dc2626 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 10px rgba(220, 38, 38, 0.15);
+}
+
+.vf-warning-icon {
+    font-size: 34px;
+    color: #ff0000;
+    vertical-align: middle;
+    margin-right: 10px;
+    text-shadow: none;
+    -webkit-text-fill-color: initial;
+}
+
+/* 6. 表单元素 */
+.vf-form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.vf-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding-left: 5px;
+}
+
+.vf-value-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px 15px;
+    font-size: 17px;
+    color: #0f172a;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    justify-content: center;
+    text-align: center;
+}
+
+.vf-input {
+    display: block;
+    width: 100%;
+    padding: 16px 15px;
+    font-size: 17px;
+    color: #0f172a;
+    background-color: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: 500;
+}
+
+.vf-input:focus {
+    border-color: #3b82f6;
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 7. 按钮美化 */
+.vf-btn-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 50px;
+}
+
+.vf-btn {
+    flex: 1;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 18px 15px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none !important;
+    border: none;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.vf-btn-primary { background: #1e293b; color: #fff; }
+.vf-btn-primary:hover { background: #0f172a; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+.vf-btn-secondary { background: #fff; border: 2px solid #e2e8f0; color: #64748b; }
+.vf-btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; color: #334155; }
+
+.vf-btn-danger { background: #ef4444; color: #fff; }
+.vf-btn-danger:hover { background: #dc2626; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3); }
+
+/* Alert Styles */
+.vf-alert {
+    padding: 20px 25px;
+    border-radius: 12px;
+    font-size: 15px;
+    margin-bottom: 30px;
+    text-align: left;
+    line-height: 1.6;
+}
+.vf-alert-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; display: flex; gap: 15px; align-items: center;}
+.vf-alert-success { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; display: flex; gap: 15px; align-items: center;}
+.vf-alert-info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; display: flex; gap: 15px; align-items: center;}
+
+/* Payment Warning Special Layout */
+.vf-alert-warning {
+    background: #fffbeb;
+    color: #92400e;
+    border: 2px solid #fcd34d;
+    display: block;
+}
+
+/*
+   新增：双语支付流程引导框样式
+*/
+.vf-payment-guide {
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px dashed #d97706;
+    border-radius: 8px;
+    padding: 20px 25px;
+    margin: 15px 0 20px 0;
+}
+
+.vf-payment-guide ol {
+    margin: 0;
+    padding-left: 25px;
+}
+
+.vf-payment-guide li {
+    margin-bottom: 18px; /* 增加步间距 */
+}
+.vf-payment-guide li:last-child { margin-bottom: 0; }
+
+/* 英文样式：大、粗 */
+.vf-step-en {
+    display: block;
+    font-size: 19px;
+    font-weight: 800; /* 特粗 */
+    color: #92400e;
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+/* 中文样式：稍小、辅助 */
+.vf-step-cn {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: #b45309;
+}
+
+/* Modal Styles */
+.vf-modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+}
+
+.vf-modal-content {
+    background: #fff;
+    width: 90%;
+    max-width: 450px;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: vf-modal-pop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes vf-modal-pop {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.vf-modal-icon { font-size: 48px; margin-bottom: 20px; display: block; }
+.vf-modal-title { font-size: 24px; font-weight: 800; color: #1e293b; margin-bottom: 10px; }
+.vf-modal-text { font-size: 16px; color: #64748b; margin-bottom: 30px; line-height: 1.6; }
+.vf-modal-email-highlight { display: block; margin-top: 10px; font-family: monospace; background: #f1f5f9; padding: 10px; border-radius: 6px; color: #0f172a; font-weight: bold; border: 1px solid #e2e8f0; word-break: break-all; }
+
+/* 移动端适配 */
+@media (max-width: 900px) {
+    #virtfusion_push_transfer .panel-heading { text-align: center !important; }
+    .vf-narrow-box { padding: 30px 20px; width: 95% !important; max-width: 95% !important; }
+    .vf-card-subtitle { white-space: normal; }
+    .vf-btn-group { flex-direction: column; gap: 15px; }
+    .vf-step-en { font-size: 16px; }
+    .vf-step-cn { font-size: 14px; }
+}
+</style>
+
+<div class="inner">
+
+    <div class="vf-narrow-box">
+
+        <div class="vf-card-subtitle">
+            Transfer ownership of this VPS to another account.
+            <span class="vf-warning-text">
+                <i class="fa fa-exclamation-triangle vf-warning-icon"></i>
+                THIS ACTION CANNOT BE UNDONE.
+            </span>
+        </div>
+
+        <!-- JS 校验错误提示占位符 -->
+        <div id="js-validation-error-box" style="display:none;"></div>
+
+        <!-- 通知区域 -->
+        <?php if (isset($error) && $error) { ?>
+            <div class="vf-alert vf-alert-error">
+                <span style="font-size: 20px;">🚫</span>
+                <div><?php echo $this->Html->safe($error); ?></div>
+            </div>
+        <?php } ?>
+
+        <?php if (isset($payment_confirmed) && $payment_confirmed) { ?>
+            <div class="vf-alert vf-alert-success">
+                <span style="font-size: 20px;">✅</span>
+                <div>Payment Confirmed! Ready to push service.</div>
+            </div>
+        <?php } elseif (isset($message) && $message && !isset($payment_required)) { ?>
+            <div class="vf-alert vf-alert-info">
+                <span style="font-size: 20px;">ℹ️</span>
+                <div><?php echo $this->Html->safe($message); ?></div>
+            </div>
+        <?php } ?>
+
+        <!-- 支付提示区域 (Payment Required) -->
+        <?php if (isset($payment_required) && $payment_required) { ?>
+            <div class="vf-alert vf-alert-warning" id="payment-alert">
+                <div style="width: 100%;">
+                    <!-- 价格标题 -->
+                    <div style="font-weight: 800; margin-bottom:10px; font-size: 18px; display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 24px;">💳</span>
+                        Payment Required: <?php echo isset($push_price) ? $this->CurrencyFormat->format($push_price, $push_price_currency ?? 'GBP') : 'N/A'; ?>
+                    </div>
+
+                    <!-- 核心修改：双语引导框 -->
+                    <div class="vf-payment-guide">
+                        <ol>
+                            <li>
+                                <span class="vf-step-en">You must pay the external PUSH fee invoice.</span>
+                                <span class="vf-step-cn">您必须到外部支付 PUSH 费用账单</span>
+                            </li>
+                            <li>
+                                <span class="vf-step-en">After payment, please return to this page.</span>
+                                <span class="vf-step-cn">支付完成后请回到本页面</span>
+                            </li>
+                            <li>
+                                <span class="vf-step-en">Click "Check Status" below to verify payment.</span>
+                                <span class="vf-step-cn">点击下方 "Check Status" 查看账单状态</span>
+                            </li>
+                            <li>
+                                <span class="vf-step-en">Once verified, re-enter the recipient email to complete the push!</span>
+                                <span class="vf-step-cn">如通过, 请您再次输入接受账户的邮箱以完成 PUSH 流程!</span>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+                        <a href="<?php echo $this->Html->safe($this->base_uri . 'client/invoices/view/' . $invoice_id . '/'); ?>" target="_blank" class="vf-btn vf-btn-primary" style="padding: 12px 20px; font-size: 14px; flex: 1;">
+                            Pay Invoice #<?php echo $this->Html->safe($invoice_id); ?> ↗️
+                        </a>
+
+                        <button type="button" class="vf-btn vf-btn-secondary" id="check-payment-btn" style="padding: 12px 20px; font-size: 14px; flex: 1;">
+                            🔄 Check Status
+                        </button>
+                    </div>
+                    <div id="payment-check-spinner" style="display: none; margin-top: 12px; color: #b45309; font-size: 13px; text-align: center; font-weight: 600;">
+                        ⏳ Verifying payment status...
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
+
+        <?php if (isset($transfer_result)) { ?>
+            <div class="vf-alert <?php echo $transfer_success ? 'vf-alert-success' : 'vf-alert-error'; ?>">
+                <span style="font-size: 20px;"><?php echo $transfer_success ? '🎉' : '❌'; ?></span>
+                <div>
+                    <strong><?php echo $transfer_success ? 'Success' : 'Error'; ?>:</strong>
+                    <?php echo $this->Html->safe($transfer_message); ?>
+                    <?php if ($transfer_success) { ?>
+                        <div style="margin-top:5px; font-size:13px;">Redirecting in <span id="countdown">3</span>s...</div>
+                    <?php } ?>
+                </div>
+            </div>
+        <?php } ?>
+
+        <!-- 表单区域 -->
+        <?php
+        $this->Form->create(null, ['id' => 'push-form']);
+        ?>
+
+        <div class="vf-form-group">
+            <label class="vf-label">🆔 Service ID</label>
+            <div class="vf-value-box">
+                <strong>#<?php echo $this->Html->safe($service->id);?></strong>
+            </div>
+            <?php $this->Form->fieldHidden('service_id', $service->id);?>
+            <?php if (isset($invoice_id)) { ?>
+                <?php $this->Form->fieldHidden('invoice_id', $invoice_id);?>
+            <?php } ?>
+            <?php $this->Form->fieldHidden('action', 'push', ['id' => 'form-action']);?>
+        </div>
+
+        <?php if (isset($service->package->name)) { ?>
+        <div class="vf-form-group">
+            <label class="vf-label">📦 Package Name</label>
+            <div class="vf-value-box"><?php echo $this->Html->safe($service->package->name);?></div>
+        </div>
+        <?php } ?>
+
+        <?php if (isset($service->date_renews)) { ?>
+        <div class="vf-form-group">
+            <label class="vf-label">📅 Renewal Date</label>
+            <div class="vf-value-box"><?php echo date('Y-m-d', strtotime($service->date_renews));?></div>
+        </div>
+        <?php } ?>
+
+        <?php if (isset($push_price) && $push_price > 0) { ?>
+        <div class="vf-form-group">
+            <label class="vf-label">💸 Push Price</label>
+            <div class="vf-value-box" style="color: #059669; font-weight: bold;">
+                <?php echo $this->CurrencyFormat->format($push_price, $push_price_currency ?? 'GBP'); ?>
+            </div>
+        </div>
+        <?php } ?>
+
+        <div class="vf-form-group">
+            <label class="vf-label" for="recipient_email">📧 Recipient Email Address</label>
+            <?php
+            $email_value = '';
+            if (isset($recipient_email)) {
+                $email_value = $recipient_email;
+            } elseif (isset($vars->recipient_email)) {
+                $email_value = $vars->recipient_email;
+            }
+
+            $this->Form->fieldText('recipient_email',
+                $email_value,
+                ['id' => 'recipient_email', 'class' => 'vf-input', 'placeholder' => 'e.g. user@example.com']
+            );
+            ?>
+        </div>
+
+        <div class="vf-form-group">
+            <label class="vf-label" for="recipient_email_confirm">📧 Confirm Recipient Email</label>
+            <input type="text" id="recipient_email_confirm" class="vf-input" placeholder="Re-enter email address to confirm" autocomplete="off">
+        </div>
+
+        <div class="vf-btn-group">
+            <a href="<?php echo $this->Html->safe($this->base_uri . 'plugin/virtfusion_push/client_main/index/');?>" class="vf-btn vf-btn-secondary">
+                🔙 Cancel
+            </a>
+            <button type="button" id="btn-trigger-modal" class="vf-btn vf-btn-primary">
+                🚀 Transfer VPS
+            </button>
+        </div>
+
+        <?php
+        $this->Form->end();
+        ?>
+
+    </div>
+
+</div>
+
+<!-- 自定义确认弹窗 (Modal) -->
+<div id="vf-confirm-modal" class="vf-modal-backdrop">
+    <div class="vf-modal-content">
+        <div class="vf-modal-icon">🤔</div>
+        <div class="vf-modal-title">Are you sure?</div>
+        <div class="vf-modal-text">
+            You are about to transfer this VPS to:
+            <span id="vf-modal-email-display" class="vf-modal-email-highlight"></span>
+            <br>
+            <span style="color: #ef4444; font-weight: bold; font-size: 14px; margin-top: 10px; display: block;">THIS ACTION CANNOT BE UNDONE!</span>
+        </div>
+        <div class="vf-btn-group" style="margin-top: 20px;">
+            <button type="button" id="vf-modal-cancel" class="vf-btn vf-btn-secondary">Cancel</button>
+            <button type="button" id="vf-modal-confirm" class="vf-btn vf-btn-danger">Confirm Push</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    // 1. 点击主按钮
+    $('#btn-trigger-modal').on('click', function(e) {
+        e.preventDefault();
+
+        var email = $('#recipient_email').val().trim();
+        var confirm = $('#recipient_email_confirm').val().trim();
+
+        $('#js-validation-error-box').hide().html('');
+        $('.vf-input').css('border-color', '#e2e8f0');
+
+        if (email === '') {
+            $('#recipient_email').css('border-color', '#ef4444');
+            showError('Please enter a recipient email address.');
+            return;
+        }
+
+        if (email !== confirm) {
+            $('#recipient_email').css('border-color', '#ef4444');
+            $('#recipient_email_confirm').css('border-color', '#ef4444');
+            showError('Email addresses do not match! Please check and try again.');
+            return;
+        }
+
+        $('#vf-modal-email-display').text(email);
+        $('#vf-confirm-modal').css('display', 'flex').hide().fadeIn(200);
+    });
+
+    // 2. 弹窗控制
+    $('#vf-modal-cancel').on('click', function() {
+        $('#vf-confirm-modal').fadeOut(200);
+    });
+
+    $('#vf-modal-confirm').on('click', function() {
+        $('#push-form').submit();
+        $(this).text('Processing...').prop('disabled', true);
+        $('#vf-modal-cancel').prop('disabled', true);
+    });
+
+    function showError(msg) {
+        var errorHtml = '<div class="vf-alert vf-alert-error">' +
+                        '<span style="font-size: 20px;">🚫</span>' +
+                        '<div><strong>Error:</strong> ' + msg + '</div>' +
+                        '</div>';
+        $('#js-validation-error-box').html(errorHtml).fadeIn();
+        $('html, body').animate({ scrollTop: $(".vf-narrow-box").offset().top - 50 }, 500);
+    }
+
+    // 3. 检查支付状态按钮
+    <?php if (isset($payment_required) && $payment_required) { ?>
+        $('#check-payment-btn').on('click', function(e) {
+            e.preventDefault();
+            // 修改表单 action 为 check_payment
+            $('#form-action').val('check_payment');
+            $('#check-payment-btn').prop('disabled', true).css('opacity', '0.7');
+            $('#payment-check-spinner').fadeIn();
+            // 提交主表单
+            $('#push-form').submit();
+        });
+    <?php } ?>
+
+    <?php if (isset($transfer_success) && $transfer_success) { ?>
+        var countdown = 3;
+        var redirectUrl = '<?php echo $this->Html->safe($this->base_uri . "plugin/virtfusion_push/client_main/index/"); ?>';
+        var countdownInterval = setInterval(function() {
+            countdown--;
+            $('#countdown').text(countdown);
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = redirectUrl;
+            }
+        }, 1000);
+        $('#push-form').hide();
+        $('.alert-warning').first().hide();
+        $('#recipient_email_confirm').closest('.vf-form-group').hide();
+        $('#btn-trigger-modal').closest('.vf-btn-group').hide();
+        $('#payment-alert').hide();
+    <?php } ?>
+});
+</script>
+
+<?php
+$this->Widget->end();
+?>

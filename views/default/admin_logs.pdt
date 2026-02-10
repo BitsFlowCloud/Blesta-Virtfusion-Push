@@ -1,0 +1,138 @@
+<div class="title_row first" style="text-align: center; padding: 20px 0; margin-bottom: 15px;">
+    <h3>VirtFusion Push - Transfer History</h3>
+</div>
+
+<div class="pad">
+    <?php /* 移除了原来的 Total Transfers 统计行 */ ?>
+
+    <?php if (empty($transfers)): ?>
+        <div class="alert alert-info" style="text-align: center;">
+            <i class="fa fa-info-circle"></i> No transfer records found.
+        </div>
+    <?php else: ?>
+        <div style="overflow-x: auto;">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style="min-width: 50px; text-align: center;">ID</th>
+                        <th style="min-width: 80px; text-align: center;">Service ID</th>
+                        <th style="min-width: 180px; text-align: center;">From</th>
+                        <th style="min-width: 180px; text-align: center;">To</th>
+                        <th style="min-width: 140px; text-align: center;">Date</th>
+                        <th style="min-width: 90px; text-align: center;">Status</th>
+                        <th style="min-width: 70px; text-align: center;">Price</th>
+                        <th style="min-width: 70px; text-align: center;">Invoice</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($transfers as $transfer): ?>
+                        <tr>
+                            <td style="text-align: center;"><?php echo $this->Html->safe($transfer->id); ?></td>
+                            <td style="text-align: center;"><?php echo $this->Html->safe($transfer->service_id); ?></td>
+                            <td style="text-align: center;">
+                                <strong>Client #<?php echo $this->Html->safe($transfer->from_client_id); ?></strong><br>
+                                <small style="color: #666;"><?php echo $this->Html->safe($transfer->from_email); ?></small>
+                            </td>
+                            <td style="text-align: center;">
+                                <strong>Client #<?php echo $this->Html->safe($transfer->to_client_id); ?></strong><br>
+                                <small style="color: #666;"><?php echo $this->Html->safe($transfer->to_email); ?></small>
+                            </td>
+                            <td style="text-align: center;">
+                                <small><?php echo $this->Html->safe($transfer->transferred_at ?? $transfer->created_at); ?></small>
+                            </td>
+                            <td style="text-align: center;">
+                                <?php
+                                $status_class = 'default';
+                                switch ($transfer->status) {
+                                    case 'completed':
+                                        $status_class = 'success';
+                                        break;
+                                    case 'failed':
+                                    case 'cancelled':
+                                        $status_class = 'danger';
+                                        break;
+                                    case 'pending':
+                                    case 'awaiting_payment':
+                                        $status_class = 'warning';
+                                        break;
+                                }
+                                ?>
+                                <span class="label label-<?php echo $status_class; ?>">
+                                    <?php echo $this->Html->safe(ucfirst($transfer->status)); ?>
+                                </span>
+                            </td>
+                            <td style="text-align: center;">
+                                <?php if ($transfer->push_price > 0): ?>
+                                    $<?php echo number_format($transfer->push_price, 2); ?>
+                                <?php else: ?>
+                                    <span class="text-muted">Free</span>
+                                <?php endif; ?>
+                            </td>
+                            <td style="text-align: center;">
+                                <?php if ($transfer->invoice_id): ?>
+                                    <a href="<?php echo $this->Html->safe($this->base_uri . 'billing/invoices/edit/' . $transfer->invoice_id . '/'); ?>"
+                                       target="_blank">
+                                        #<?php echo $this->Html->safe($transfer->invoice_id); ?>
+                                    </a>
+                                <?php else: ?>
+                                    <span class="text-muted">-</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <?php if (isset($total_pages) && $total_pages > 1): ?>
+            <div class="text-center" style="margin-top: 30px; text-align: center;">
+                <?php
+                $base_url = $this->base_uri . 'plugin/virtfusion_push/admin_logs/index/' . $plugin_id . '/?p=';
+                
+                // 定义统一的按钮样式，确保显示为方块
+                $btn_base = 'display: inline-block; padding: 6px 12px; margin: 0 2px; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; font-size: 14px; line-height: 1.42857143;';
+                
+                // 链接样式
+                $style_link = $btn_base . ' color: #337ab7; background-color: #fff; cursor: pointer;';
+                
+                // 激活状态样式 (当前页)
+                $style_active = $btn_base . ' color: #fff; background-color: #337ab7; border-color: #337ab7; cursor: default;';
+                
+                // 禁用状态样式 (不可点击的箭头)
+                $style_disabled = $btn_base . ' color: #777; background-color: #fff; border-color: #ddd; cursor: not-allowed;';
+
+                echo '<ul class="pagination" style="display: inline-block; padding: 0; margin: 0; list-style: none;">';
+
+                // Previous button («)
+                if ($page > 1) {
+                    echo '<li style="display:inline;"><a href="' . $this->Html->safe($base_url . ($page - 1)) . '" style="' . $style_link . '">«</a></li>';
+                } else {
+                    // 即使禁用了，也加上样式，让它看起来像个灰色的按钮，而不是纯文本
+                    echo '<li class="disabled" style="display:inline;"><span style="' . $style_disabled . '">«</span></li>';
+                }
+
+                // Page numbers
+                for ($i = 1; $i <= $total_pages; $i++) {
+                    if ($i == $page) {
+                        // 当前页
+                        echo '<li class="active" style="display:inline;"><span style="' . $style_active . '">' . $i . '</span></li>';
+                    } else {
+                        // 其他页
+                        echo '<li style="display:inline;"><a href="' . $this->Html->safe($base_url . $i) . '" style="' . $style_link . '">' . $i . '</a></li>';
+                    }
+                }
+
+                // Next button (»)
+                if ($page < $total_pages) {
+                    echo '<li style="display:inline;"><a href="' . $this->Html->safe($base_url . ($page + 1)) . '" style="' . $style_link . '">»</a></li>';
+                } else {
+                    // 即使禁用了，也加上样式
+                    echo '<li class="disabled" style="display:inline;"><span style="' . $style_disabled . '">»</span></li>';
+                }
+
+                echo '</ul>';
+                ?>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>

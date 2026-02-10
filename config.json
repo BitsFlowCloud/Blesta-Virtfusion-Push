@@ -1,0 +1,12 @@
+{
+    "version": "1.0.0",
+    "name": "VirtFusion Push",
+    "description": "Allows clients to transfer VPS ownership between accounts",
+    "authors": [
+        {
+            "name": "Custom Development",
+            "url": "https://virtfusion.com"
+        }
+    ],
+    "logo": "views/default/images/logo.png"
+}
